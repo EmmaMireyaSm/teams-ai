@@ -22,6 +22,9 @@ from ..tokenizers import Tokenizer
 from .prompt_completion_model import PromptCompletionModel
 from .prompt_response import PromptResponse
 
+import urllib.request
+import ssl
+import os
 
 @dataclass
 class OpenAIModelOptions:
@@ -178,34 +181,83 @@ class OpenAIModel(PromptCompletionModel):
             messages.append(param)
 
         try:
-            completion = await self._client.chat.completions.create(
-                messages=messages,
-                model=model,
-                presence_penalty=template.config.completion.presence_penalty,
-                frequency_penalty=template.config.completion.frequency_penalty,
-                top_p=template.config.completion.top_p,
-                temperature=template.config.completion.temperature,
-                max_tokens=max_tokens,
-            )
+            if template.config.completion.model is None:
 
-            if self._options.logger is not None:
-                self._options.logger.debug("COMPLETION:\n%s", completion.model_dump_json())
+                def allowSelfSignedHttps(allowed):
+                    # bypass the server certificate verification on client side
+                    if allowed and not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None):
+                        ssl._create_default_https_context = ssl._create_unverified_context
+                
+                allowSelfSignedHttps(True) # this line is needed if you use self-signed certificate in your scoring service.
+                
+                # Request data goes here
+                # The example below assumes JSON formatting which may be updated
+                # depending on the format your endpoint expects.
+                # More information can be found here:
+                # https://docs.microsoft.com/azure/machine-learning/how-to-deploy-advanced-entry-script
 
-            input: Optional[Message] = None
-            last_message = len(res.output) - 1
+                data = {'chat_history':[], 'question': msg.content}
+                
+                body = str.encode(json.dumps(data))
+                
+                scoring_uri = self._options.endpoint
+                api_key = self._options.api_key
 
-            # Skips the first message which is the prompt
-            if last_message > 0 and res.output[last_message].role == "user":
-                input = res.output[last_message]
+                if not api_key:
+                    raise Exception("A key should be provided to invoke the endpoint")
+                
+                # The azureml-model-deployment header will force the request to go to a specific deployment.
+                # Remove this header to have the request observe the endpoint traffic rules
+                headers = {'Content-Type':'application/json', 'Authorization':('Bearer '+ api_key), 'azureml-model-deployment': model}
+                
+                req = urllib.request.Request(scoring_uri, body, headers)
+                
+                try:
+                    response = urllib.request.urlopen(req)
+                
+                    result = response.read()
+                except urllib.error.HTTPError as error:
+                    self._options.logger.error("The request failed with status code: %s", str(error.code))
+                    self._options.logger.error("The request failed with status code: %s", str(error.info()))
+                    self._options.logger.error("The request failed with status code: %s", str(error.read().decode("utf8", 'ignore')))        
 
-            return PromptResponse[str](
-                input=input,
-                message=Message(
-                    role=completion.choices[0].message.role,
-                    content=completion.choices[0].message.content,
-                ),
-            )
+
+                input: Optional[Message] = None
+                res_output = json.loads(result.decode('utf-8'))["answer"] 
+
+                return PromptResponse[str](
+                    input=input,
+                    message=Message(role="assistant", content=res_output)
+                )
+            else:
+                completion = await self._client.chat.completions.create(
+                    messages=messages,
+                    model=model,
+                    presence_penalty=template.config.completion.presence_penalty,
+                    frequency_penalty=template.config.completion.frequency_penalty,
+                    top_p=template.config.completion.top_p,
+                    temperature=template.config.completion.temperature,
+                    max_tokens=max_tokens,
+                )
+
+                if self._options.logger is not None:
+                    self._options.logger.debug("COMPLETION:\n%s", completion.model_dump_json())
+
+                input: Optional[Message] = None
+                output_length = len(res.output)
+
+                if output_length > 0 and res.output[output_length - 1].role == "user":
+                    input = res.output[output_length - 1]
+
+                return PromptResponse[str](
+                    input=input,
+                    message=Message(
+                        role=completion.choices[0].message.role,
+                        content=completion.choices[0].message.content,
+                    ),
+                )
         except openai.APIError as err:
+
             if self._options.logger is not None:
                 self._options.logger.error("ERROR:\n%s", json.dumps(err.body))
 
