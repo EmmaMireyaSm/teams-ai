@@ -244,10 +244,11 @@ class OpenAIModel(PromptCompletionModel):
                     self._options.logger.debug("COMPLETION:\n%s", completion.model_dump_json())
 
                 input: Optional[Message] = None
-                output_length = len(res.output)
+                last_message = len(res.output) - 1
 
-                if output_length > 0 and res.output[output_length - 1].role == "user":
-                    input = res.output[output_length - 1]
+                 # Skips the first message which is the prompt
+                if last_message > 0 and res.output[last_message].role == "user":
+                    input = res.output[last_message]
 
                 return PromptResponse[str](
                     input=input,
@@ -257,7 +258,6 @@ class OpenAIModel(PromptCompletionModel):
                     ),
                 )
         except openai.APIError as err:
-
             if self._options.logger is not None:
                 self._options.logger.error("ERROR:\n%s", json.dumps(err.body))
 
