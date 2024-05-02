@@ -94,7 +94,7 @@ class OpenAIModel(PromptCompletionModel):
         """
 
         self._options = options
-
+        print(options)
         if isinstance(options, OpenAIModelOptions):
             self._client = openai.AsyncOpenAI(
                 api_key=options.api_key,
@@ -181,7 +181,7 @@ class OpenAIModel(PromptCompletionModel):
             messages.append(param)
 
         try:
-            if template.config.completion.model is None:
+            if self._options.endpoint is not None and "score" in self._options.endpoint:
 
                 def allowSelfSignedHttps(allowed):
                     # bypass the server certificate verification on client side
