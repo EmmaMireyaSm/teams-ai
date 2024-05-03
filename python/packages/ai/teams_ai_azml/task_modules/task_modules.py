@@ -18,8 +18,8 @@ from botbuilder.schema.teams import (
     TaskModuleTaskInfo,
 )
 
-from teams.route import Route
-from teams.state import TurnState
+from teams_ai_azml.route import Route
+from teams_ai_azml.state import TurnState
 
 FETCH_INVOKE_NAME = "task/fetch"
 SUBMIT_INVOKE_NAME = "task/submit"

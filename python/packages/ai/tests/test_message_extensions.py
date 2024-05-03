@@ -16,7 +16,7 @@ from botbuilder.schema.teams import (
     TaskModuleTaskInfo,
 )
 
-from teams import Application
+from teams_ai_azml import Application
 from tests.utils import SimpleAdapter
 
 

@@ -8,7 +8,7 @@ from unittest.mock import MagicMock
 
 from botbuilder.core import MemoryStorage, StoreItem
 
-from teams.state import UserState
+from teams_ai_azml.state import UserState
 
 
 class TestUserState(IsolatedAsyncioTestCase):

@@ -8,14 +8,14 @@ from unittest import IsolatedAsyncioTestCase
 
 from botbuilder.core import TurnContext
 
-from teams.ai.augmentations.sequence_augmentation import SequenceAugmentation
-from teams.ai.models.chat_completion_action import ChatCompletionAction
-from teams.ai.models.prompt_response import PromptResponse
-from teams.ai.planners import Plan
-from teams.ai.prompts.message import Message
-from teams.ai.prompts.prompt_functions import PromptFunctions
-from teams.ai.tokenizers.gpt_tokenizer import GPTTokenizer
-from teams.state.turn_state import TurnState
+from teams_ai_azml.ai.augmentations.sequence_augmentation import SequenceAugmentation
+from teams_ai_azml.ai.models.chat_completion_action import ChatCompletionAction
+from teams_ai_azml.ai.models.prompt_response import PromptResponse
+from teams_ai_azml.ai.planners import Plan
+from teams_ai_azml.ai.prompts.message import Message
+from teams_ai_azml.ai.prompts.prompt_functions import PromptFunctions
+from teams_ai_azml.ai.tokenizers.gpt_tokenizer import GPTTokenizer
+from teams_ai_azml.state.turn_state import TurnState
 
 
 class TestSequenceAugmentation(IsolatedAsyncioTestCase):

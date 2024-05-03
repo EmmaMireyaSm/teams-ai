@@ -10,10 +10,10 @@ import httpx
 import openai
 from botbuilder.core import TurnContext
 
-from teams.ai.actions import ActionTypes
-from teams.ai.moderators import OpenAIModerator, OpenAIModeratorOptions
-from teams.ai.planners import Plan, PredictedDoCommand, PredictedSayCommand
-from teams.state import ConversationState, TempState, TurnState, UserState
+from teams_ai_azml.ai.actions import ActionTypes
+from teams_ai_azml.ai.moderators import OpenAIModerator, OpenAIModeratorOptions
+from teams_ai_azml.ai.planners import Plan, PredictedDoCommand, PredictedSayCommand
+from teams_ai_azml.state import ConversationState, TempState, TurnState, UserState
 
 
 class MockAsyncModerations:

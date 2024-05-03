@@ -9,7 +9,7 @@ from unittest.mock import MagicMock
 
 from botbuilder.core import MemoryStorage, Storage, StoreItem, TurnContext
 
-from teams.state import ConversationState, State, TurnState, UserState, state
+from teams_ai_azml.state import ConversationState, State, TurnState, UserState, state
 
 
 class CustomConversationState(ConversationState):

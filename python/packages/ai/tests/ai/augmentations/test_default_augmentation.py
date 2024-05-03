@@ -8,12 +8,12 @@ from unittest import IsolatedAsyncioTestCase
 
 from botbuilder.core import TurnContext
 
-from teams.ai.augmentations.default_augmentation import DefaultAugmentation
-from teams.ai.models.prompt_response import PromptResponse
-from teams.ai.planners.plan import Plan, PredictedDoCommand, PredictedSayCommand
-from teams.ai.prompts.message import Message
-from teams.ai.tokenizers.gpt_tokenizer import GPTTokenizer
-from teams.state import TurnState
+from teams_ai_azml.ai.augmentations.default_augmentation import DefaultAugmentation
+from teams_ai_azml.ai.models.prompt_response import PromptResponse
+from teams_ai_azml.ai.planners.plan import Plan, PredictedDoCommand, PredictedSayCommand
+from teams_ai_azml.ai.prompts.message import Message
+from teams_ai_azml.ai.tokenizers.gpt_tokenizer import GPTTokenizer
+from teams_ai_azml.state import TurnState
 
 
 class TestDefaultAugmentation(IsolatedAsyncioTestCase):

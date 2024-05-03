@@ -17,9 +17,9 @@ from botframework.connector.auth import (
     PasswordServiceClientCredentialFactory,
 )
 
-from teams.input_file import InputFile
-from teams.teams_adapter import TeamsAdapter
-from teams.teams_attachment_downloader import (
+from teams_ai_azml.input_file import InputFile
+from teams_ai_azml.teams_adapter import TeamsAdapter
+from teams_ai_azml.teams_attachment_downloader import (
     TeamsAttachmentDownloader,
     TeamsAttachmentDownloaderOptions,
 )
@@ -38,7 +38,11 @@ class MockCredentialsFactory(PasswordServiceClientCredentialFactory):
         super().__init__(app_id="botAppId", password="botAppPassword")
 
     async def create_credentials(
-        self, app_id: str, oauth_scope: str, login_endpoint: str, validate_authority: bool,
+        self,
+        app_id: str,
+        oauth_scope: str,
+        login_endpoint: str,
+        validate_authority: bool,
     ) -> Authentication:
         return MockBFAppCredentials()
 

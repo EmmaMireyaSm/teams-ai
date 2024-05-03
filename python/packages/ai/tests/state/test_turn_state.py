@@ -8,7 +8,7 @@ from unittest.mock import MagicMock
 
 from botbuilder.core import MemoryStorage, StoreItem
 
-from teams.state import ConversationState, TempState, TurnState, UserState
+from teams_ai_azml.state import ConversationState, TempState, TurnState, UserState
 
 AppTurnState = TurnState[ConversationState, UserState, TempState]
 

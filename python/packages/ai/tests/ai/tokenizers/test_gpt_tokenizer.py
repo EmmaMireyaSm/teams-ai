@@ -5,7 +5,7 @@ Licensed under the MIT License.
 
 import unittest
 
-from teams.ai.tokenizers import GPTTokenizer
+from teams_ai_azml.ai.tokenizers import GPTTokenizer
 
 
 class TestGPTTokenizer(unittest.TestCase):

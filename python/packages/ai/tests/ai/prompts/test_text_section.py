@@ -8,9 +8,9 @@ from unittest import IsolatedAsyncioTestCase
 
 from botbuilder.core import TurnContext
 
-from teams.ai.prompts import PromptFunctions, TextSection
-from teams.ai.tokenizers import GPTTokenizer
-from teams.state import TurnState
+from teams_ai_azml.ai.prompts import PromptFunctions, TextSection
+from teams_ai_azml.ai.tokenizers import GPTTokenizer
+from teams_ai_azml.state import TurnState
 
 
 class TestTextSection(IsolatedAsyncioTestCase):

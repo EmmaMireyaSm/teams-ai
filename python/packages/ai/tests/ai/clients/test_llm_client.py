@@ -10,20 +10,20 @@ import httpx
 import openai
 from openai.types import chat
 
-from teams.ai.clients.llm_client import LLMClient, LLMClientOptions
-from teams.ai.models.openai_model import OpenAIModel, OpenAIModelOptions
-from teams.ai.models.prompt_response import PromptResponse
-from teams.ai.prompts import Message
-from teams.ai.prompts.completion_config import CompletionConfig
-from teams.ai.prompts.prompt_functions import PromptFunctions
-from teams.ai.prompts.prompt_template import PromptTemplate
-from teams.ai.prompts.prompt_template_config import PromptTemplateConfig
-from teams.ai.prompts.sections.text_section import TextSection
-from teams.ai.tokenizers.gpt_tokenizer import GPTTokenizer
-from teams.state import TurnState
-from teams.state.conversation_state import ConversationState
-from teams.state.temp_state import TempState
-from teams.state.user_state import UserState
+from teams_ai_azml.ai.clients.llm_client import LLMClient, LLMClientOptions
+from teams_ai_azml.ai.models.openai_model import OpenAIModel, OpenAIModelOptions
+from teams_ai_azml.ai.models.prompt_response import PromptResponse
+from teams_ai_azml.ai.prompts import Message
+from teams_ai_azml.ai.prompts.completion_config import CompletionConfig
+from teams_ai_azml.ai.prompts.prompt_functions import PromptFunctions
+from teams_ai_azml.ai.prompts.prompt_template import PromptTemplate
+from teams_ai_azml.ai.prompts.prompt_template_config import PromptTemplateConfig
+from teams_ai_azml.ai.prompts.sections.text_section import TextSection
+from teams_ai_azml.ai.tokenizers.gpt_tokenizer import GPTTokenizer
+from teams_ai_azml.state import TurnState
+from teams_ai_azml.state.conversation_state import ConversationState
+from teams_ai_azml.state.temp_state import TempState
+from teams_ai_azml.state.user_state import UserState
 
 
 class MockAsyncCompletions:

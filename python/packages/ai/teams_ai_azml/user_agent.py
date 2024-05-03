@@ -11,4 +11,4 @@ from importlib.metadata import version
 class _UserAgent:
     @property
     def user_agent(self) -> str:
-        return f"teamsai-py/{version('teams-ai')}"
+        return f"teamsai-py/{version('teams_ai_azml')}"

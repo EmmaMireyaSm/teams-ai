@@ -118,7 +118,7 @@ const app = new Application<ApplicationTurnState>({
 // Register your data source with planner
 planner.prompts.addDataSource(
     new VectraDataSource({
-        name: 'teams-ai',
+        name: 'teams_ai_azml',
         apiKey: process.env.OPENAI_KEY!,
         azureApiKey: process.env.AZURE_OPENAI_KEY!,
         azureEndpoint: process.env.AZURE_OPENAI_ENDPOINT!,

@@ -9,14 +9,14 @@ from unittest import IsolatedAsyncioTestCase, mock
 from azure.core.exceptions import HttpResponseError
 from botbuilder.core import TurnContext
 
-from teams import ApplicationError
-from teams.ai.actions import ActionTypes
-from teams.ai.moderators import (
+from teams_ai_azml import ApplicationError
+from teams_ai_azml.ai.actions import ActionTypes
+from teams_ai_azml.ai.moderators import (
     AzureContentSafetyModerator,
     AzureContentSafetyModeratorOptions,
 )
-from teams.ai.planners import Plan, PredictedDoCommand, PredictedSayCommand
-from teams.state import ConversationState, TempState, TurnState, UserState
+from teams_ai_azml.ai.planners import Plan, PredictedDoCommand, PredictedSayCommand
+from teams_ai_azml.state import ConversationState, TempState, TurnState, UserState
 
 
 class MockContentSafetyClient:

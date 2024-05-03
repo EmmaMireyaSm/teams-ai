@@ -8,9 +8,13 @@ from unittest.mock import MagicMock
 
 from botbuilder.core import TurnContext
 
-from teams.ai.prompts import ConversationHistorySection, Message, PromptFunctions
-from teams.ai.tokenizers import GPTTokenizer
-from teams.state import ConversationState, TempState, TurnState, UserState
+from teams_ai_azml.ai.prompts import (
+    ConversationHistorySection,
+    Message,
+    PromptFunctions,
+)
+from teams_ai_azml.ai.tokenizers import GPTTokenizer
+from teams_ai_azml.state import ConversationState, TempState, TurnState, UserState
 
 
 class TestConversationHistory(IsolatedAsyncioTestCase):

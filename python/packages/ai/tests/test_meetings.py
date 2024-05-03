@@ -11,7 +11,7 @@ import pytest
 from botbuilder.core import TurnContext
 from botbuilder.schema import Activity, ChannelAccount, ConversationAccount
 
-from teams import Application
+from teams_ai_azml import Application
 from tests.utils import SimpleAdapter
 
 

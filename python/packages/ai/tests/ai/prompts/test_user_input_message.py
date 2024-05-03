@@ -9,16 +9,16 @@ from unittest.mock import MagicMock
 
 from botbuilder.core import TurnContext
 
-from teams import InputFile
-from teams.ai.prompts import (
+from teams_ai_azml import InputFile
+from teams_ai_azml.ai.prompts import (
     ImageContentPart,
     ImageUrl,
     PromptFunctions,
     TextContentPart,
     UserInputMessage,
 )
-from teams.ai.tokenizers import GPTTokenizer
-from teams.state import ConversationState, TempState, TurnState, UserState
+from teams_ai_azml.ai.tokenizers import GPTTokenizer
+from teams_ai_azml.state import ConversationState, TempState, TurnState, UserState
 
 
 class TestUserInputMessage(IsolatedAsyncioTestCase):

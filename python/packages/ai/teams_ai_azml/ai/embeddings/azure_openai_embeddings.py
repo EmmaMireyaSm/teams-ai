@@ -13,34 +13,53 @@ from typing import List, Union
 
 import openai
 
-from teams.ai.embeddings.embeddings_model import EmbeddingsModel
-from teams.ai.embeddings.embeddings_response import EmbeddingsResponse
-from teams.ai.embeddings.openai_embeddings_options import OpenAIEmbeddingsOptions
+from teams_ai_azml.ai.embeddings.azure_openai_embeddings_options import (
+    AzureOpenAIEmbeddingsOptions,
+)
+from teams_ai_azml.ai.embeddings.embeddings_model import EmbeddingsModel
+from teams_ai_azml.ai.embeddings.embeddings_response import EmbeddingsResponse
 
 
-class OpenAIEmbeddings(EmbeddingsModel):
+class AzureOpenAIEmbeddings(EmbeddingsModel):
     """
-    A `EmbeddingsModel` for calling the OpenAI hosted model.
+    A `EmbeddingsModel` for calling the AzureOpenAI hosted model.
     """
 
     _log: Logger
 
-    options: OpenAIEmbeddingsOptions
+    options: AzureOpenAIEmbeddingsOptions
     "Options the client was configured with."
 
-    def __init__(self, options: OpenAIEmbeddingsOptions, log=Logger("teams.ai")) -> None:
+    def __init__(self, options: AzureOpenAIEmbeddingsOptions, log=Logger("teams.ai")) -> None:
         """
-        Creates a new `OpenAIEmbeddings` instance.
+        Creates a new `AzureOpenAIEmbeddings` instance.
 
         Args:
-            options (OpenAIEmbeddingsOptions): Options for configuring the embeddings client.
+            options (AzureOpenAIEmbeddingsOptions): Options for configuring the embeddings client.
             log (Logger): Logger to use.
         """
 
         self.options = options
         self._log = log
+
         if not self.options.retry_policy:
             self.options.retry_policy = [2, 5]
+        if not self.options.azure_api_version:
+            self.options.azure_api_version = "2023-05-15"
+
+        endpoint = self.options.azure_endpoint.strip()
+        if endpoint[-1] == "/":
+            endpoint = endpoint[0 : (len(endpoint) - 1)]
+
+        if not endpoint.lower().startswith("https://"):
+            raise ValueError(
+                f"""
+                Client created with an invalid endpoint of \"{endpoint}\".
+                The endpoint must be a valid HTTPS url.
+                """
+            )
+
+        self.options.azure_endpoint = endpoint
 
     async def create_embeddings(
         self, inputs: Union[str, List[str], List[int], List[List[int]]], retry_count=0
@@ -59,9 +78,9 @@ class OpenAIEmbeddings(EmbeddingsModel):
             self._log.info("Embeddings REQUEST: inputs=%s", inputs)
 
         if not self.options.request_config:
-            self.options.request_config = {"Authorization": f"Bearer {self.options.api_key}"}
+            self.options.request_config = {"api-key": self.options.azure_api_key}
         else:
-            self.options.request_config.update({"Authorization": f"Bearer {self.options.api_key}"})
+            self.options.request_config.update({"api-key": self.options.azure_api_key})
 
         if not self.options.request_config.get("Content-Type"):
             self.options.request_config.update({"Content-Type": "application/json"})
@@ -69,16 +88,15 @@ class OpenAIEmbeddings(EmbeddingsModel):
         if not self.options.request_config.get("User-Agent"):
             self.options.request_config.update({"User-Agent": self.user_agent})
 
-        if self.options.organization:
-            self.options.request_config.update({"OpenAI-Organization": self.options.organization})
-
-        client = openai.AsyncOpenAI(
-            api_key=self.options.api_key, default_headers=self.options.request_config
+        client = openai.AsyncAzureOpenAI(
+            api_key=self.options.azure_api_key,
+            api_version=self.options.azure_api_version,
+            azure_endpoint=self.options.azure_endpoint,
+            default_headers=self.options.request_config,
         )
-
         try:
             start_time = datetime.now()
-            res = await client.embeddings.create(input=inputs, model=self.options.model)
+            res = await client.embeddings.create(input=inputs, model=self.options.azure_deployment)
 
             data = list(map(attrgetter("embedding"), sorted(res.data, key=lambda x: x.index)))
 

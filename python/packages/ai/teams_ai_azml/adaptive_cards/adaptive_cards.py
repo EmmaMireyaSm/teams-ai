@@ -16,9 +16,9 @@ from botbuilder.schema import (
     InvokeResponse,
 )
 
-from teams.query import Query
-from teams.route import Route
-from teams.state import TurnState
+from teams_ai_azml.query import Query
+from teams_ai_azml.route import Route
+from teams_ai_azml.state import TurnState
 
 from .adaptive_cards_search_params import AdaptiveCardsSearchParams
 from .adaptive_cards_search_result import AdaptiveCardsSearchResult

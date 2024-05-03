@@ -9,8 +9,8 @@ from unittest import TestCase
 
 import yaml
 
-from teams.ai.tokenizers.gpt_tokenizer import GPTTokenizer
-from teams.ai.utilities import to_string
+from teams_ai_azml.ai.tokenizers.gpt_tokenizer import GPTTokenizer
+from teams_ai_azml.ai.utilities import to_string
 
 
 class TestUtilities(TestCase):

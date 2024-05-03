@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List, Optional
 
-import teams.ai.augmentations
+import teams_ai_azml.ai.augmentations
 
 from ..models.chat_completion_action import ChatCompletionAction
 from .prompt_template_config import PromptTemplateConfig
@@ -37,4 +37,4 @@ class PromptTemplate:
     prompt: PromptSection
     config: PromptTemplateConfig
     actions: Optional[List[ChatCompletionAction]] = None
-    augmentation: Optional[teams.ai.augmentations.Augmentation] = None
+    augmentation: Optional[teams_ai_azml.ai.augmentations.Augmentation] = None

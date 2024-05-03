@@ -8,10 +8,10 @@ from unittest import IsolatedAsyncioTestCase
 
 from botbuilder.core import TurnContext
 
-from teams.ai.models import PromptResponse
-from teams.ai.tokenizers import GPTTokenizer
-from teams.ai.validators import DefaultResponseValidator
-from teams.state import TurnState
+from teams_ai_azml.ai.models import PromptResponse
+from teams_ai_azml.ai.tokenizers import GPTTokenizer
+from teams_ai_azml.ai.validators import DefaultResponseValidator
+from teams_ai_azml.state import TurnState
 
 
 class TestDefaultResponseValidator(IsolatedAsyncioTestCase):

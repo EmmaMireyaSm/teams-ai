@@ -9,9 +9,9 @@ from unittest import IsolatedAsyncioTestCase
 import pytest
 from botbuilder.core import TurnContext
 
-from teams.ai.data_sources import TextDataSource
-from teams.ai.tokenizers import GPTTokenizer, Tokenizer
-from teams.state import TurnState
+from teams_ai_azml.ai.data_sources import TextDataSource
+from teams_ai_azml.ai.tokenizers import GPTTokenizer, Tokenizer
+from teams_ai_azml.state import TurnState
 
 
 class TestTextDataSource(IsolatedAsyncioTestCase):

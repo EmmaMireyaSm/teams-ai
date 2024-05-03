@@ -5,7 +5,7 @@ Licensed under the MIT License.
 
 from unittest import TestCase
 
-from teams.ai.prompts import AssistantMessage
+from teams_ai_azml.ai.prompts import AssistantMessage
 
 
 class TestAssistantMessage(TestCase):

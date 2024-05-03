@@ -9,7 +9,7 @@ from unittest import IsolatedAsyncioTestCase, mock
 import httpx
 import openai
 
-from teams.ai.embeddings import OpenAIEmbeddings, OpenAIEmbeddingsOptions
+from teams_ai_azml.ai.embeddings import OpenAIEmbeddings, OpenAIEmbeddingsOptions
 
 embedding_1 = [
     -0.006929283495992422,

@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from teams.teams_adapter import TeamsAdapter
+from teams_ai_azml.teams_adapter import TeamsAdapter
 
 
 @dataclass

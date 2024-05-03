@@ -10,16 +10,20 @@ import httpx
 import openai
 from openai.types import chat
 
-from teams.ai.models import AzureOpenAIModelOptions, OpenAIModel, OpenAIModelOptions
-from teams.ai.prompts import (
+from teams_ai_azml.ai.models import (
+    AzureOpenAIModelOptions,
+    OpenAIModel,
+    OpenAIModelOptions,
+)
+from teams_ai_azml.ai.prompts import (
     CompletionConfig,
     PromptFunctions,
     PromptTemplate,
     PromptTemplateConfig,
     TextSection,
 )
-from teams.ai.tokenizers import GPTTokenizer
-from teams.state import TurnState
+from teams_ai_azml.ai.tokenizers import GPTTokenizer
+from teams_ai_azml.state import TurnState
 
 
 class MockAsyncCompletions:

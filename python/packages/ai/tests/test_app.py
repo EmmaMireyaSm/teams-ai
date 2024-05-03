@@ -11,8 +11,8 @@ import pytest
 from botbuilder.core import TurnContext
 from botbuilder.schema import Activity, ChannelAccount, ConversationAccount
 
-from teams import Application
-from teams.message_reaction_types import MessageReactionTypes
+from teams_ai_azml import Application
+from teams_ai_azml.message_reaction_types import MessageReactionTypes
 from tests.utils import SimpleAdapter
 
 

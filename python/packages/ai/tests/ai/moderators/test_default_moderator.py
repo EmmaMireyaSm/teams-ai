@@ -8,9 +8,9 @@ from unittest import IsolatedAsyncioTestCase
 
 from botbuilder.core import TurnContext
 
-from teams.ai.moderators import DefaultModerator
-from teams.ai.planners import Plan
-from teams.state import TurnState
+from teams_ai_azml.ai.moderators import DefaultModerator
+from teams_ai_azml.ai.planners import Plan
+from teams_ai_azml.state import TurnState
 
 
 class TestDefaultModerator(IsolatedAsyncioTestCase):

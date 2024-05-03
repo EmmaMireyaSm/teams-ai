@@ -10,8 +10,8 @@ import httpx
 import openai
 import pytest
 
-from teams.ai.embeddings.azure_openai_embeddings import AzureOpenAIEmbeddings
-from teams.ai.embeddings.azure_openai_embeddings_options import (
+from teams_ai_azml.ai.embeddings.azure_openai_embeddings import AzureOpenAIEmbeddings
+from teams_ai_azml.ai.embeddings.azure_openai_embeddings_options import (
     AzureOpenAIEmbeddingsOptions,
 )
 

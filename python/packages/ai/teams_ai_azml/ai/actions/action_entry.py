@@ -9,7 +9,7 @@ from typing import Any, Awaitable, Callable, Generic, Optional, TypeVar
 
 from botbuilder.core import TurnContext
 
-from teams.state import TurnState
+from teams_ai_azml.state import TurnState
 
 from .action_turn_context import ActionTurnContext
 

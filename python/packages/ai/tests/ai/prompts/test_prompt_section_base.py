@@ -9,7 +9,7 @@ from unittest.mock import AsyncMock
 
 from botbuilder.core import TurnContext
 
-from teams.ai.prompts import (
+from teams_ai_azml.ai.prompts import (
     FunctionCall,
     ImageContentPart,
     Message,
@@ -18,8 +18,8 @@ from teams.ai.prompts import (
     RenderedPromptSection,
     TextContentPart,
 )
-from teams.ai.tokenizers import GPTTokenizer
-from teams.state import TurnState
+from teams_ai_azml.ai.tokenizers import GPTTokenizer
+from teams_ai_azml.state import TurnState
 
 
 class TestablePromptSectionBase(PromptSectionBase):

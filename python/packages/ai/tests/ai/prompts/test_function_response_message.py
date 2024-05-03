@@ -8,9 +8,9 @@ from unittest.mock import MagicMock
 
 from botbuilder.core import TurnContext
 
-from teams.ai.prompts import FunctionResponseMessage, PromptFunctions
-from teams.ai.tokenizers import GPTTokenizer
-from teams.state import Memory
+from teams_ai_azml.ai.prompts import FunctionResponseMessage, PromptFunctions
+from teams_ai_azml.ai.tokenizers import GPTTokenizer
+from teams_ai_azml.state import Memory
 
 
 class TestFunctionResponseMessage(IsolatedAsyncioTestCase):

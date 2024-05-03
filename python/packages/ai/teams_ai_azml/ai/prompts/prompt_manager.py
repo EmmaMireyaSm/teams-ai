@@ -13,7 +13,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 from botbuilder.core import TurnContext
 
-import teams.ai.augmentations
+import teams_ai_azml.ai.augmentations
 
 from ...app_error import ApplicationError
 from ...state import MemoryBase
@@ -373,7 +373,7 @@ class PromptManager(PromptFunctions):
         template_config: PromptTemplateConfig,
         template_actions: List[ChatCompletionAction],
         sections: List[PromptSection],
-    ) -> Optional[teams.ai.augmentations.Augmentation]:
+    ) -> Optional[teams_ai_azml.ai.augmentations.Augmentation]:
         # Check for augmentation
         augmentation = template_config.augmentation
         if augmentation:
@@ -393,7 +393,7 @@ class PromptManager(PromptFunctions):
 
             # Next, create augmentation
             augmentation_type = augmentation.augmentation_type
-            curr_augmentation: Optional[teams.ai.augmentations.Augmentation] = None
+            curr_augmentation: Optional[teams_ai_azml.ai.augmentations.Augmentation] = None
 
             # Parse the dict objects into ChatCompletionAction objects
             parsed_actions: List[ChatCompletionAction] = []
@@ -403,9 +403,13 @@ class PromptManager(PromptFunctions):
 
             curr_actions = parsed_actions if template_actions else []
             if augmentation_type == "monologue":
-                curr_augmentation = teams.ai.augmentations.MonologueAugmentation(curr_actions)
+                curr_augmentation = teams_ai_azml.ai.augmentations.MonologueAugmentation(
+                    curr_actions
+                )
             elif augmentation_type == "sequence":
-                curr_augmentation = teams.ai.augmentations.SequenceAugmentation(curr_actions)
+                curr_augmentation = teams_ai_azml.ai.augmentations.SequenceAugmentation(
+                    curr_actions
+                )
 
             # Append the augmentations prompt section
             if curr_augmentation:

@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "teams-ai"
-version = "1.0.1"
-description = "SDK focused on building AI based applications for Microsoft Teams."
-authors = ["Microsoft <teams@microsoft.com>"]
+name = "teams-ai-azml"
+version = "1.0.0"
+description = ""
+authors = ["manatee <esanchez@grupoabraxas.com>"]
 readme = "README.md"
-repository = "https://github.com/microsoft/teams-ai"
+repository = "https://github.com/EmmaMireyaSm/teams-ai"
 documentation = "https://learn.microsoft.com/en-us/microsoftteams/platform/bots/how-to/teams%20conversational%20ai/teams-conversation-ai-overview"
-keywords = ["microsoft", "teams", "ai", "bot"]
+keywords = ["microsoft", "teams_ai_azml", "ai", "bot"]
 packages = [
-    { include = "teams" },
+    { include = "teams_ai_azml" },
     { include = "tests" }
 ]
 
@@ -55,7 +55,7 @@ target-version = ['py38']
 profile = "black"
 
 [tool.pytest.ini_options]
-addopts = "-rx --cov-report html:coverage/html --cov-report lcov:coverage/lcov.info --cov=teams"
+addopts = "-rx --cov-report html:coverage/html --cov-report lcov:coverage/lcov.info --cov=teams_ai_azml"
 log_cli = true
 log_cli_level = "INFO"
 

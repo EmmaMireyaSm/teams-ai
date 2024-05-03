@@ -7,8 +7,8 @@ import os
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import MagicMock
 
-from teams.ai.data_sources import TextDataSource
-from teams.ai.prompts import (
+from teams_ai_azml.ai.data_sources import TextDataSource
+from teams_ai_azml.ai.prompts import (
     ConversationHistorySection,
     GroupSection,
     Prompt,
@@ -20,9 +20,9 @@ from teams.ai.prompts import (
     UserInputMessage,
     UserMessage,
 )
-from teams.ai.prompts.sections import ActionAugmentationSection
-from teams.ai.prompts.sections.data_source_section import DataSourceSection
-from teams.app_error import ApplicationError
+from teams_ai_azml.ai.prompts.sections import ActionAugmentationSection
+from teams_ai_azml.ai.prompts.sections.data_source_section import DataSourceSection
+from teams_ai_azml.app_error import ApplicationError
 
 TEST_ASSERTS_FOLDER: str = os.path.join("tests", "ai", "prompts", "test_assets")
 

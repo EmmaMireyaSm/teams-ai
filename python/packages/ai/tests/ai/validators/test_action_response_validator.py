@@ -8,11 +8,14 @@ from unittest import IsolatedAsyncioTestCase
 
 from botbuilder.core import TurnContext
 
-from teams.ai.models import ChatCompletionAction, PromptResponse
-from teams.ai.prompts import FunctionCall, Message
-from teams.ai.tokenizers import GPTTokenizer
-from teams.ai.validators import ActionResponseValidator, ValidatedChatCompletionAction
-from teams.state import TurnState
+from teams_ai_azml.ai.models import ChatCompletionAction, PromptResponse
+from teams_ai_azml.ai.prompts import FunctionCall, Message
+from teams_ai_azml.ai.tokenizers import GPTTokenizer
+from teams_ai_azml.ai.validators import (
+    ActionResponseValidator,
+    ValidatedChatCompletionAction,
+)
+from teams_ai_azml.state import TurnState
 
 
 class TestActionResponseValidator(IsolatedAsyncioTestCase):

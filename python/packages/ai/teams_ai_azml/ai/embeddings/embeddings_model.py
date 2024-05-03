@@ -8,7 +8,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import List, Union
 
-from teams.ai.embeddings.embeddings_response import EmbeddingsResponse
+from teams_ai_azml.ai.embeddings.embeddings_response import EmbeddingsResponse
 
 from ...user_agent import _UserAgent
 

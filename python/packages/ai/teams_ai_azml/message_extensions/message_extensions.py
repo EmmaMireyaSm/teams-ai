@@ -35,7 +35,7 @@ from botbuilder.schema.teams import (
     TaskModuleTaskInfo,
 )
 
-from teams.state import TurnState
+from teams_ai_azml.state import TurnState
 
 from ..route import Route
 

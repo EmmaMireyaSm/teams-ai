@@ -8,10 +8,10 @@ from unittest.mock import AsyncMock, MagicMock
 
 from botbuilder.core import MemoryStorage, TurnContext
 
-from teams.ai.prompts import PromptFunctions, TemplateSection
-from teams.ai.tokenizers import GPTTokenizer
-from teams.app_error import ApplicationError
-from teams.state import ConversationState, TempState, TurnState, UserState
+from teams_ai_azml.ai.prompts import PromptFunctions, TemplateSection
+from teams_ai_azml.ai.tokenizers import GPTTokenizer
+from teams_ai_azml.app_error import ApplicationError
+from teams_ai_azml.state import ConversationState, TempState, TurnState, UserState
 
 
 class TestTemplateSection(IsolatedAsyncioTestCase):

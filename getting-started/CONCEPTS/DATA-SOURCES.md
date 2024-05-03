@@ -52,7 +52,7 @@ export class VectraDataSource implements DataSource
 // Inside of index.ts
 planner.prompts.addDataSource(
     new VectraDataSource({
-        name: 'teams-ai',
+        name: 'teams_ai_azml',
         apiKey: process.env.OPENAI_KEY!,
         azureApiKey: process.env.AZURE_OPENAI_KEY!,
         azureEndpoint: process.env.AZURE_OPENAI_ENDPOINT!,
@@ -61,13 +61,13 @@ planner.prompts.addDataSource(
 );
 ```
 
-Inside the prompt's config.json. Here, `teams-ai` denotes the name of the VectraDataSource, and 1200 is `maxTokens`.
+Inside the prompt's config.json. Here, `teams_ai_azml` denotes the name of the VectraDataSource, and 1200 is `maxTokens`.
 
 ```json
 "augmentation": {
     "augmentation_type": "none",
     "data_sources": {
-        "teams-ai": 1200
+        "teams_ai_azml": 1200
     }
 }
 ```
@@ -84,17 +84,17 @@ public class KernelMemoryDataSource : IDataSource
 
 ```cs
 // Inside of Program.cs
-KernelMemoryDataSource dataSource = new("teams-ai", sp.GetService<IKernelMemory>()!);
-prompts.AddDataSource("teams-ai", dataSource);
+KernelMemoryDataSource dataSource = new("teams_ai_azml", sp.GetService<IKernelMemory>()!);
+prompts.AddDataSource("teams_ai_azml", dataSource);
 ```
 
-Inside the prompt's `config.json`. Here, `teams-ai` denotes the name of the `KernelMemoryDataSource`, and 900 is the `maxTokens`.
+Inside the prompt's `config.json`. Here, `teams_ai_azml` denotes the name of the `KernelMemoryDataSource`, and 900 is the `maxTokens`.
 
 ```json
 "augmentation": {
     "augmentation_type": "none",
     "data_sources": {
-        "teams-ai": 900
+        "teams_ai_azml": 900
     }
 }
 ```

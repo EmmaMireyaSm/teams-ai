@@ -6,6 +6,9 @@ Licensed under the MIT License.
 from __future__ import annotations
 
 import json
+import os
+import ssl
+import urllib.request
 from dataclasses import dataclass
 from logging import Logger
 from typing import List, Optional, Union
@@ -22,9 +25,6 @@ from ..tokenizers import Tokenizer
 from .prompt_completion_model import PromptCompletionModel
 from .prompt_response import PromptResponse
 
-import urllib.request
-import ssl
-import os
 
 @dataclass
 class OpenAIModelOptions:
@@ -181,53 +181,66 @@ class OpenAIModel(PromptCompletionModel):
             messages.append(param)
 
         try:
-            if self._options.endpoint is not None and "score" in self._options.endpoint:
+            if self._options.endpoint is not None and self._options.api_key is not None:
 
-                def allowSelfSignedHttps(allowed):
+                def allow_self_signed_https(allowed):
                     # bypass the server certificate verification on client side
-                    if allowed and not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None):
+                    if (
+                        allowed
+                        and not os.environ.get("PYTHONHTTPSVERIFY", "")
+                        and getattr(ssl, "_create_unverified_context", None)
+                    ):
                         ssl._create_default_https_context = ssl._create_unverified_context
-                
-                allowSelfSignedHttps(True) # this line is needed if you use self-signed certificate in your scoring service.
-                
+
+                allow_self_signed_https(
+                    True
+                )  # this line is needed if you use self-signed certificate in your scoring service.
+
                 # Request data goes here
                 # The example below assumes JSON formatting which may be updated
                 # depending on the format your endpoint expects.
                 # More information can be found here:
                 # https://docs.microsoft.com/azure/machine-learning/how-to-deploy-advanced-entry-script
 
-                data = {'chat_history':[], 'question': msg.content}
-                
+                data = {"chat_history": [], "question": msg.content}
+
                 body = str.encode(json.dumps(data))
-                
+
                 scoring_uri = self._options.endpoint
                 api_key = self._options.api_key
 
                 if not api_key:
                     raise Exception("A key should be provided to invoke the endpoint")
-                
-                # The azureml-model-deployment header will force the request to go to a specific deployment.
-                # Remove this header to have the request observe the endpoint traffic rules
-                headers = {'Content-Type':'application/json', 'Authorization':('Bearer '+ api_key), 'azureml-model-deployment': model}
-                
+                # The azureml-model-deployment header will force the request to go to
+                # a specific deployment.
+                headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": ("Bearer " + api_key),
+                    "azureml-model-deployment": model,
+                }
+
                 req = urllib.request.Request(scoring_uri, body, headers)
-                
+
                 try:
                     response = urllib.request.urlopen(req)
-                
+
                     result = response.read()
                 except urllib.error.HTTPError as error:
-                    self._options.logger.error("The request failed with status code: %s", str(error.code))
-                    self._options.logger.error("The request failed with status code: %s", str(error.info()))
-                    self._options.logger.error("The request failed with status code: %s", str(error.read().decode("utf8", 'ignore')))        
-
+                    self._options.logger.error(
+                        "The request failed with status code: %s", str(error.code)
+                    )
+                    self._options.logger.error(
+                        "The request failed with status code: %s", str(error.info())
+                    )
+                    self._options.logger.error(
+                        "The request failed with status code: %s",
+                        str(error.read().decode("utf8", "ignore")),
+                    )
 
                 input: Optional[Message] = None
-                res_output = json.loads(result.decode('utf-8'))["answer"] 
-
+                res_output = json.loads(result.decode("utf-8"))["answer"]
                 return PromptResponse[str](
-                    input=input,
-                    message=Message(role="assistant", content=res_output)
+                    input=input, message=Message(role="assistant", content=res_output)
                 )
             else:
                 completion = await self._client.chat.completions.create(
@@ -244,11 +257,10 @@ class OpenAIModel(PromptCompletionModel):
                     self._options.logger.debug("COMPLETION:\n%s", completion.model_dump_json())
 
                 input: Optional[Message] = None
-                last_message = len(res.output) - 1
+                output_length = len(res.output)
 
-                 # Skips the first message which is the prompt
-                if last_message > 0 and res.output[last_message].role == "user":
-                    input = res.output[last_message]
+                if output_length > 0 and res.output[output_length - 1].role == "user":
+                    input = res.output[output_length - 1]
 
                 return PromptResponse[str](
                     input=input,
@@ -260,7 +272,6 @@ class OpenAIModel(PromptCompletionModel):
         except openai.APIError as err:
             if self._options.logger is not None:
                 self._options.logger.error("ERROR:\n%s", json.dumps(err.body))
-
             return PromptResponse[str](
                 status="error",
                 error=f"""
