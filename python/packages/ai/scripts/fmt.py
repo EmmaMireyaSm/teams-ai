@@ -1,30 +1,11 @@
-# """
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
-# """
-
-# import subprocess
-
-
-# def fmt():
-#     subprocess.run(["poetry", "run", "black", "teams_ai_azml", "scripts", "tests"], check=True)
-#     subprocess.run(["poetry", "run", "isort", "teams_ai_azml", "scripts", "tests"], check=True)
-
 """
 Copyright (c) Microsoft Corporation. All rights reserved.
 Licensed under the MIT License.
 """
 
 import subprocess
-from pathlib import Path
 
 
-for e in Path("./packages").glob("*"):
-    if e.is_dir():
-        print("------ Package[" + e.name + "] ------")
-        subprocess.run(["poetry", "run", "fmt"], cwd=e.absolute(), check=True)
-
-# for e in Path("./samples").glob("*"):
-#     if e.is_dir():
-#         print("------ Sample[" + e.name + "] ------")
-#         subprocess.run(["poetry", "run", "fmt"], cwd=e.absolute(), check=True)
+def fmt():
+    subprocess.run(["poetry", "run", "black", "teams_ai_azml", "scripts", "tests"], check=True)
+    subprocess.run(["poetry", "run", "isort", "teams_ai_azml", "scripts", "tests"], check=True)
