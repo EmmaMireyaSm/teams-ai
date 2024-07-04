@@ -316,11 +316,7 @@ class AI(Generic[StateT]):
                 channel_data=channel_data,
                 entities=[
                     AIEntity(
-                        citation=(
-                            list(referenced_citations)
-                            if referenced_citations
-                            else []
-                        ),
+                        citation=(list(referenced_citations) if referenced_citations else []),
                         additional_type=["AIGeneratedContent"],
                     ),
                 ],

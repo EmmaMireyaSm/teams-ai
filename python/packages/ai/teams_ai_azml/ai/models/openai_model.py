@@ -186,7 +186,7 @@ class OpenAIModel(PromptCompletionModel):
             messages.append(param)
 
         try:
-                        
+
             if self._options.endpoint is not None and self._options.api_key is not None:
 
                 def allow_self_signed_https(allowed):
@@ -210,12 +210,15 @@ class OpenAIModel(PromptCompletionModel):
 
                 chat_history = []
                 if "chat_history" in memory["conversation"].keys():
-                    for i,k in zip(memory.conversation["chat_history"][0::2], memory.conversation["chat_history"][1::2]):
-                        dict_={"inputs":None, "outputs": None}
-                        user_role=i.role
-                        user_content=i.content
-                        assistant_role=k.role
-                        assistant_content=k.content
+                    for i, k in zip(
+                        memory.conversation["chat_history"][0::2],
+                        memory.conversation["chat_history"][1::2],
+                    ):
+                        dict_ = {"inputs": None, "outputs": None}
+                        user_role = i.role
+                        user_content = i.content
+                        assistant_role = k.role
+                        assistant_content = k.content
                         if "user" == user_role:
                             dict_["inputs"] = {"question": user_content}
                         if "assistant" == assistant_role:
