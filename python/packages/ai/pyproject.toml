@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "teams-ai-azml"
-version = "1.0.0"
+version = "1.1.1"
 description = ""
 authors = ["manatee <esanchez@grupoabraxas.com>"]
 readme = "README.md"

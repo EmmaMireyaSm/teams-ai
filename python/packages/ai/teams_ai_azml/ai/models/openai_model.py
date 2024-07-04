@@ -94,7 +94,6 @@ class OpenAIModel(PromptCompletionModel):
         """
 
         self._options = options
-        print(options)
         if isinstance(options, OpenAIModelOptions):
             self._client = openai.AsyncOpenAI(
                 api_key=options.api_key,
@@ -202,7 +201,20 @@ class OpenAIModel(PromptCompletionModel):
                 # More information can be found here:
                 # https://docs.microsoft.com/azure/machine-learning/how-to-deploy-advanced-entry-script
 
-                data = {"chat_history": [], "question": msg.content}
+                chat_history = []
+                if "chat_history" in memory["conversation"].keys():
+                    for i,k in zip(memory.conversation["chat_history"][0::2], memory.conversation["chat_history"][1::2]):
+                        dict_={"inputs":None, "outputs": None}
+                        user_role=i.role
+                        user_content=i.content
+                        assistant_role=k.role
+                        assistant_content=k.content
+                        if "user" == user_role:
+                            dict_["inputs"] = {"question": user_content}
+                        if "assistant" == assistant_role:
+                            dict_["outputs"] = {"answer": assistant_content}
+                        chat_history.append(dict_)
+                data = {"chat_history": chat_history, "question": msg.content}
 
                 body = str.encode(json.dumps(data))
 
