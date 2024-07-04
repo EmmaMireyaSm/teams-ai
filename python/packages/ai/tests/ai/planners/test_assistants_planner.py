@@ -27,17 +27,17 @@ from openai.types.beta.threads import (
     run_submit_tool_outputs_params,
 )
 
-from teams.ai.actions.action_types import ActionTypes
-from teams.ai.planners.assistants_planner import (
+from teams_ai_azml.ai.actions.action_types import ActionTypes
+from teams_ai_azml.ai.planners.assistants_planner import (
     AssistantsPlanner,
     OpenAIAssistantsOptions,
 )
-from teams.ai.planners.plan import PredictedDoCommand, PredictedSayCommand
-from teams.app_error import ApplicationError
-from teams.state import TurnState
-from teams.state.conversation_state import ConversationState
-from teams.state.temp_state import TempState
-from teams.state.user_state import UserState
+from teams_ai_azml.ai.planners.plan import PredictedDoCommand, PredictedSayCommand
+from teams_ai_azml.app_error import ApplicationError
+from teams_ai_azml.state import TurnState
+from teams_ai_azml.state.conversation_state import ConversationState
+from teams_ai_azml.state.temp_state import TempState
+from teams_ai_azml.state.user_state import UserState
 
 ASSISTANT_ID = "assistant_id"
 ASSISTANT_MODEL = "test model"

@@ -6,7 +6,7 @@ Licensed under the MIT License.
 import re
 from typing import List, Optional
 
-from teams.ai.citations import ClientCitation
+from teams_ai_azml.ai.citations import ClientCitation
 
 
 def get_used_citations(

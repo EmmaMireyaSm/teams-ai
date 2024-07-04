@@ -5,7 +5,7 @@ Licensed under the MIT License.
 
 from unittest import TestCase
 
-from teams.utils.citations import format_citations_response
+from teams_ai_azml.utils.citations import format_citations_response
 
 
 class TestFormatCitationsResponse(TestCase):

@@ -7,9 +7,9 @@ from asyncio import Future
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import MagicMock
 
-from teams import Application, ApplicationOptions
-from teams.auth import AuthOptions, OAuth, OAuthOptions
-from teams.state import TurnState
+from teams_ai_azml import Application, ApplicationOptions
+from teams_ai_azml.auth import AuthOptions, OAuth, OAuthOptions
+from teams_ai_azml.state import TurnState
 
 
 class TestAuthManager(IsolatedAsyncioTestCase):

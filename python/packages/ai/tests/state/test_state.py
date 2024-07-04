@@ -6,7 +6,7 @@ Licensed under the MIT License.
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import MagicMock
 
-from teams.state import State
+from teams_ai_azml.state import State
 
 
 class TestState(IsolatedAsyncioTestCase):

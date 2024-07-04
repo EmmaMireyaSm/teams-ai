@@ -5,8 +5,8 @@ Licensed under the MIT License.
 
 from unittest import TestCase
 
-from teams.ai.citations.citations import Appearance, ClientCitation
-from teams.utils.citations import get_used_citations
+from teams_ai_azml.ai.citations.citations import Appearance, ClientCitation
+from teams_ai_azml.utils.citations import get_used_citations
 
 
 class TestGetUsedCitations(TestCase):
