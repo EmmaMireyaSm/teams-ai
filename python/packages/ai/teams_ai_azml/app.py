@@ -37,6 +37,7 @@ from .adaptive_cards.adaptive_cards import AdaptiveCards
 from .ai import AI
 from .app_error import ApplicationError
 from .app_options import ApplicationOptions
+from .auth import AuthManager, OAuth, OAuthOptions
 from .meetings.meetings import Meetings
 from .message_extensions.message_extensions import MessageExtensions
 from .route import Route, RouteHandler
@@ -46,6 +47,7 @@ from .teams_adapter import TeamsAdapter
 from .typing import Typing
 
 StateT = TypeVar("StateT", bound=TurnState)
+IN_SIGN_IN_KEY = "__InSignInFlow__"
 
 
 class Application(Bot, Generic[StateT]):
@@ -67,6 +69,7 @@ class Application(Bot, Generic[StateT]):
     _adaptive_card: AdaptiveCards[StateT]
     _options: ApplicationOptions
     _adapter: Optional[TeamsAdapter] = None
+    _auth: Optional[AuthManager[StateT]] = None
     _before_turn: List[RouteHandler[StateT]] = []
     _after_turn: List[RouteHandler[StateT]] = []
     _routes: List[Route[StateT]] = []
@@ -94,15 +97,20 @@ class Application(Bot, Generic[StateT]):
         self._meetings = Meetings[StateT](self._routes)
 
         if options.long_running_messages and (not options.adapter or not options.bot_app_id):
-            raise ApplicationError(
-                """
+            raise ApplicationError("""
                 The `ApplicationOptions.long_running_messages` property is unavailable because 
                 no adapter or `bot_app_id` was configured.
-                """
-            )
+                """)
 
         if options.adapter:
             self._adapter = options.adapter
+
+        if options.auth:
+            self._auth = AuthManager[StateT](default=options.auth.default)
+
+            for name, opts in options.auth.settings.items():
+                if isinstance(opts, OAuthOptions):
+                    self._auth.set(name, OAuth[StateT](opts))
 
     @property
     def adapter(self) -> TeamsAdapter:
@@ -111,12 +119,10 @@ class Application(Bot, Generic[StateT]):
         """
 
         if not self._adapter:
-            raise ApplicationError(
-                """
+            raise ApplicationError("""
                 The Application.adapter property is unavailable because it was 
                 not configured when creating the Application.
-                """
-            )
+                """)
 
         return self._adapter
 
@@ -128,13 +134,24 @@ class Application(Bot, Generic[StateT]):
         """
 
         if not self._ai:
-            raise ApplicationError(
-                """
+            raise ApplicationError("""
                 The `Application.ai` property is unavailable because no AI options were configured.
-                """
-            )
+                """)
 
         return self._ai
+
+    @property
+    def auth(self) -> AuthManager[StateT]:
+        """
+        The application's authentication manager
+        """
+        if not self._auth:
+            raise ApplicationError("""
+                The `Application.auth` property is unavailable because
+                no Auth options were configured.
+                """)
+
+        return self._auth
 
     @property
     def options(self) -> ApplicationOptions:
@@ -417,7 +434,7 @@ class Application(Bot, Generic[StateT]):
             )
 
         def __call__(
-            func: Callable[[TurnContext, StateT, FileConsentCardResponse], Awaitable[None]]
+            func: Callable[[TurnContext, StateT, FileConsentCardResponse], Awaitable[None]],
         ) -> Callable[[TurnContext, StateT, FileConsentCardResponse], Awaitable[None]]:
             async def __handler__(context: TurnContext, state: StateT):
                 if not context.activity.value:
@@ -459,7 +476,7 @@ class Application(Bot, Generic[StateT]):
             )
 
         def __call__(
-            func: Callable[[TurnContext, StateT, FileConsentCardResponse], Awaitable[None]]
+            func: Callable[[TurnContext, StateT, FileConsentCardResponse], Awaitable[None]],
         ) -> Callable[[TurnContext, StateT, FileConsentCardResponse], Awaitable[None]]:
             async def __handler__(context: TurnContext, state: StateT):
                 if not context.activity.value:
@@ -499,7 +516,7 @@ class Application(Bot, Generic[StateT]):
             )
 
         def __call__(
-            func: Callable[[TurnContext, StateT, O365ConnectorCardActionQuery], Awaitable[None]]
+            func: Callable[[TurnContext, StateT, O365ConnectorCardActionQuery], Awaitable[None]],
         ) -> Callable[[TurnContext, StateT, O365ConnectorCardActionQuery], Awaitable[None]]:
             async def __handler__(context: TurnContext, state: StateT):
                 if not context.activity.value:
@@ -539,7 +556,7 @@ class Application(Bot, Generic[StateT]):
             )
 
         def __call__(
-            func: Callable[[TurnContext, StateT, str], Awaitable[None]]
+            func: Callable[[TurnContext, StateT, str], Awaitable[None]],
         ) -> Callable[[TurnContext, StateT, str], Awaitable[None]]:
             async def __handler__(context: TurnContext, state: StateT):
                 if not context.activity.value:
@@ -647,75 +664,116 @@ class Application(Bot, Generic[StateT]):
 
     async def _on_turn(self, context: TurnContext):
         try:
-            if self._options.start_typing_timer:
-                await self.typing.start(context)
+            await self._start_typing(context)
 
-            # remove @mentions
-            if self.options.remove_recipient_mention:
-                if context.activity.type == ActivityTypes.message:
-                    context.activity.text = context.remove_recipient_mention(context.activity)
+            self._remove_mentions(context)
 
-            state: StateT = cast(StateT, await TurnState.load(context, self._options.storage))
+            state = await self._initialize_state(context)
 
-            if self._turn_state_factory:
-                state = await self._turn_state_factory(context)
+            if not await self._authenticate_user(context, state):
+                return
 
-            await state.load(context, self._options.storage)
-            state.temp.input = context.activity.text
+            if not await self._run_before_turn_middleware(context, state):
+                return
 
-            # run before turn middleware
-            for before_turn in self._before_turn:
-                is_ok = await before_turn(context, state)
+            await self._handle_file_downloads(context, state)
 
-                if not is_ok:
-                    await state.save(context, self._options.storage)
-                    return
-
-            # download input files
-            if (
-                self._options.file_downloaders is not None
-                and len(self._options.file_downloaders) > 0
-            ):
-                input_files = state.temp.input_files if state.temp.input_files is not None else []
-                for file_downloader in self._options.file_downloaders:
-                    files = await file_downloader.download_files(context)
-                    input_files.append(files)
-                state.temp.input_files = input_files
-
-            # run activity handlers
             is_ok, matches = await self._on_activity(context, state)
-
             if not is_ok:
                 await state.save(context, self._options.storage)
                 return
-
-            # only run chain when no activity handlers matched
-            if (
-                matches == 0
-                and self._ai
-                and self._options.ai
-                and context.activity.type == ActivityTypes.message
-                and context.activity.text
-            ):
-                is_ok = await self._ai.run(context, state)
-
-                if not is_ok:
-                    await state.save(context, self._options.storage)
+            if matches == 0:
+                if not await self._run_ai_chain(context, state):
                     return
 
-            # run after turn middleware
-            for after_turn in self._after_turn:
-                is_ok = await after_turn(context, state)
-
-                if not is_ok:
-                    await state.save(context, self._options.storage)
-                    return
+            if not await self._run_after_turn_middleware(context, state):
+                return
 
             await state.save(context, self._options.storage)
         except ApplicationError as err:
             await self._on_error(context, err)
         finally:
             self.typing.stop()
+
+    async def _start_typing(self, context: TurnContext):
+        if self._options.start_typing_timer:
+            await self.typing.start(context)
+
+    def _remove_mentions(self, context: TurnContext):
+        if self.options.remove_recipient_mention and context.activity.type == ActivityTypes.message:
+            context.activity.text = context.remove_recipient_mention(context.activity)
+
+    async def _initialize_state(self, context: TurnContext):
+        state = cast(StateT, await TurnState.load(context, self._options.storage))
+
+        if self._turn_state_factory:
+            state = await self._turn_state_factory(context)
+
+        await state.load(context, self._options.storage)
+        state.temp.input = context.activity.text
+        return state
+
+    async def _authenticate_user(self, context: TurnContext, state):
+        if self.options.auth and self._auth:
+            auth_condition = (
+                isinstance(self.options.auth.auto, bool) and self.options.auth.auto
+            ) or (callable(self.options.auth.auto) and self.options.auth.auto(context))
+            user_in_sign_in = IN_SIGN_IN_KEY in state.user
+            if auth_condition or user_in_sign_in:
+                key: Optional[str] = state.user.get(IN_SIGN_IN_KEY, self.options.auth.default)
+
+                if key is not None:
+                    state.user[IN_SIGN_IN_KEY] = key
+                    res = await self._auth.sign_in(context, state, key=key)
+                    if res.status == "complete":
+                        del state.user[IN_SIGN_IN_KEY]
+
+                    if res.status == "pending":
+                        await state.save(context, self._options.storage)
+                        return False
+
+                    if res.status == "error" and res.reason != "invalid-activity":
+                        del state.user[IN_SIGN_IN_KEY]
+                        raise ApplicationError(f"[{res.reason}] => {res.message}")
+
+        return True
+
+    async def _run_before_turn_middleware(self, context: TurnContext, state):
+        for before_turn in self._before_turn:
+            is_ok = await before_turn(context, state)
+            if not is_ok:
+                await state.save(context, self._options.storage)
+                return False
+        return True
+
+    async def _handle_file_downloads(self, context: TurnContext, state):
+        if self._options.file_downloaders and len(self._options.file_downloaders) > 0:
+            input_files = state.temp.input_files if state.temp.input_files is not None else []
+            for file_downloader in self._options.file_downloaders:
+                files = await file_downloader.download_files(context)
+                input_files.append(files)
+            state.temp.input_files = input_files
+
+    async def _run_ai_chain(self, context: TurnContext, state):
+        if (
+            self._ai
+            and self._options.ai
+            and context.activity.type == ActivityTypes.message
+            and context.activity.text
+        ):
+            is_ok = await self._ai.run(context, state)
+            if not is_ok:
+                await state.save(context, self._options.storage)
+                return False
+        return True
+
+    async def _run_after_turn_middleware(self, context: TurnContext, state):
+        for after_turn in self._after_turn:
+            is_ok = await after_turn(context, state)
+            if not is_ok:
+                await state.save(context, self._options.storage)
+                return False
+        return True
 
     async def _on_activity(self, context: TurnContext, state: StateT) -> Tuple[bool, int]:
         matches = 0
